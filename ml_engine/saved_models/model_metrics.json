@@ -1,0 +1,142 @@
+{
+    "best_model": "Random Forest",
+    "models": {
+        "Random Forest": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0,
+            "training_time": 0.733,
+            "confusion_matrix": [
+                [
+                    253,
+                    0
+                ],
+                [
+                    0,
+                    247
+                ]
+            ]
+        },
+        "Decision Tree": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0,
+            "training_time": 0.011,
+            "confusion_matrix": [
+                [
+                    253,
+                    0
+                ],
+                [
+                    0,
+                    247
+                ]
+            ]
+        },
+        "SVM": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0,
+            "training_time": 0.246,
+            "confusion_matrix": [
+                [
+                    253,
+                    0
+                ],
+                [
+                    0,
+                    247
+                ]
+            ]
+        },
+        "Logistic Regression": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0,
+            "training_time": 0.036,
+            "confusion_matrix": [
+                [
+                    253,
+                    0
+                ],
+                [
+                    0,
+                    247
+                ]
+            ]
+        },
+        "XGBoost": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0,
+            "training_time": 0.655,
+            "confusion_matrix": [
+                [
+                    253,
+                    0
+                ],
+                [
+                    0,
+                    247
+                ]
+            ]
+        },
+        "Artificial Neural Network": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0,
+            "training_time": 22.019,
+            "confusion_matrix": [
+                [
+                    253,
+                    0
+                ],
+                [
+                    0,
+                    247
+                ]
+            ]
+        }
+    },
+    "features": [
+        "url_length",
+        "domain_length",
+        "is_ip",
+        "count_dots",
+        "count_hyphens",
+        "count_at",
+        "count_question",
+        "count_and",
+        "count_equal",
+        "count_slash",
+        "count_percent",
+        "count_digits",
+        "count_subdomains",
+        "has_https",
+        "https_in_domain",
+        "is_shortened",
+        "has_suspicious_keyword",
+        "path_depth",
+        "prefix_suffix_hyphen",
+        "entropy",
+        "domain_entropy",
+        "tld_risk",
+        "punycode",
+        "special_char_ratio"
+    ],
+    "sample_count": 2496,
+    "train_samples": 1996,
+    "test_samples": 500
+}

@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}System Architecture & Viva Guide{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5">
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="hero-title fs-3 mb-1">Project Documentation, Architecture & Viva Guide</h2>
+        <p class="text-secondary small mb-0">Complete technical reference, UML diagrams, and engineering viva voce preparation.</p>
+    </div>
+
+    <!-- Quick Navigation Pills -->
+    <div class="cyber-card mb-4 p-2">
+        <ul class="nav nav-pills gap-2" id="docTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active btn-sm" data-bs-toggle="pill" data-bs-target="#archPane">
+                    <i class="fa-solid fa-sitemap me-1"></i> System Architecture
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link btn-sm" data-bs-toggle="pill" data-bs-target="#pipelinePane">
+                    <i class="fa-solid fa-code-compare me-1"></i> Feature Engineering Pipeline
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link btn-sm" data-bs-toggle="pill" data-bs-target="#vivaPane">
+                    <i class="fa-solid fa-clipboard-question me-1"></i> Final Viva Voce Q&A
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link btn-sm" data-bs-toggle="pill" data-bs-target="#vscodePane">
+                    <i class="fa-solid fa-terminal me-1"></i> VS Code Execution Guide
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Content Panes -->
+    <div class="tab-content">
+        <!-- Pane 1: System Architecture -->
+        <div class="tab-pane fade show active" id="archPane" role="tabpanel">
+            <div class="cyber-card mb-4">
+                <h5 class="cyber-card-title mb-3">
+                    <i class="fa-solid fa-shield-halved text-cyan"></i> Multi-Tier Defense Architecture
+                </h5>
+                <p class="text-secondary small">
+                    The platform implements a defense-in-depth framework structured into four independent inspection layers:
+                </p>
+                <div class="row g-3 text-secondary small">
+                    <div class="col-md-3">
+                        <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                            <h6 class="text-white small fw-bold"><i class="fa-solid fa-link text-info me-1"></i> Tier 1: URL Intelligence</h6>
+                            <p class="mb-0">24 numerical features capturing lexical length, token counts, Shannon entropy, TLD risk, and DGA markers.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                            <h6 class="text-white small fw-bold"><i class="fa-solid fa-brain text-purple me-1"></i> Tier 2: Ensemble AI & ANN</h6>
+                            <p class="mb-0">6-way classification: Random Forest, Decision Tree, SVM, Logistic Regression, XGBoost, and Keras Deep Learning ANN.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                            <h6 class="text-white small fw-bold"><i class="fa-solid fa-file-code text-warning me-1"></i> Tier 3: Isolated DOM Inspection</h6>
+                            <p class="mb-0">Safe headless inspection checking password action targets, hidden iframes, external link ratios, and brand spoofing.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                            <h6 class="text-white small fw-bold"><i class="fa-solid fa-eye text-success me-1"></i> Tier 4: OpenCV Visual Matching</h6>
+                            <p class="mb-0">Perceptual dHash and color histogram correlation against legitimate brand targets to detect unauthorized impersonation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architectural Flow Diagram (ASCII / Markdown representation) -->
+            <div class="cyber-card">
+                <h5 class="cyber-card-title mb-3">
+                    <i class="fa-solid fa-diagram-project text-primary"></i> Data Flow Sequence
+                </h5>
+                <pre class="p-3 rounded font-monospace small" style="background: rgba(0,0,0,0.5); color: #38bdf8; overflow-x: auto;">
+[Input: Raw URL or QR Code (Quishing)]
+               │
+               ▼
+   [OpenCV QR Decoder] ──(if QR)──► Extracts Embedded URL
+               │
+               ├────────────────────────────────────────┐
+               ▼                                        ▼
+   [24-Feature URL Extractor]               [Safe Headless Sandbox]
+   - Lexical & Syntactic metrics            - Isolated HTTP GET (Capped Stream)
+   - Shannon Entropy & Subdomain levels     - Password & Form Action Check
+   - TLD Risk & Punycode Homographs         - Hidden Iframes & Obfuscated JS
+               │                                        │
+               ▼                                        ▼
+   [StandardScaler Normalizer]                 [Content Risk: 0-100]
+               │                                        │
+               ▼                                        │
+   [6-Way AI Engine & Inference]                        │
+   - Random Forest (150 trees)                          │
+   - XGBoost (Gradient Boosted)                         │
+   - Keras ANN (4 Dense Layers + BatchNorm)             │
+   - Support Vector Machine (RBF)                       │
+   - Decision Tree & Logistic Regression                │
+               │                                        │
+               ├───────────────────┬────────────────────┘
+               ▼                   ▼
+    [SHAP TreeExplainer]   [OpenCV Visual Similarity]
+    - Shapley Contributions - dHash + HSV Histograms
+    - Top Phishing Factors - Brand Impersonation Check
+               │                   │
+               └─────────┬─────────┘
+                         ▼
+          [Composite Risk Engine (0-100)]
+          - Dynamic Weighted Fusion
+          - Security Warning Generators
+          - Actionable Remediation Tips
+                         │
+                         ▼
+        [SQLite Audit DB & Web Dashboard]
+                </pre>
+            </div>
+        </div>
+
+        <!-- Pane 2: Features Pipeline -->
+        <div class="tab-pane fade" id="pipelinePane" role="tabpanel">
+            <div class="cyber-card">
+                <h5 class="cyber-card-title mb-3">
+                    <i class="fa-solid fa-list-check text-cyan"></i> The 24 Extracted URL Features
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-cyber">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Feature Token</th>
+                                <th>Category</th>
+                                <th>Cybersecurity Significance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td class="font-monospace text-info">url_length</td><td>Lexical</td><td>Phishing URLs frequently append long obfuscated tokens to conceal target destination.</td></tr>
+                            <tr><td>2</td><td class="font-monospace text-info">domain_length</td><td>Host</td><td>Excessively long domain names often disguise multi-level brand spoofing.</td></tr>
+                            <tr><td>3</td><td class="font-monospace text-info">is_ip</td><td>Host</td><td>Using raw IP addresses bypasses domain registration reputation filters.</td></tr>
+                            <tr><td>4</td><td class="font-monospace text-info">count_dots</td><td>Syntax</td><td>Multiple dots indicate deep subdomain nesting designed to mimic legitimate domains.</td></tr>
+                            <tr><td>5</td><td class="font-monospace text-info">count_hyphens</td><td>Syntax</td><td>Phishers insert hyphens between brand names (e.g. <code>paypal-security-update</code>).</td></tr>
+                            <tr><td>6</td><td class="font-monospace text-info">count_at</td><td>Syntax</td><td>Browsers ignore text preceding <code>@</code> in URLs, directing users to the host after it.</td></tr>
+                            <tr><td>7</td><td class="font-monospace text-info">count_digits</td><td>Lexical</td><td>High digit concentration correlates with randomized automated phishing generation.</td></tr>
+                            <tr><td>8</td><td class="font-monospace text-info">count_subdomains</td><td>Host</td><td>3 or more subdomains strongly correlates with malicious hosting environments.</td></tr>
+                            <tr><td>9</td><td class="font-monospace text-info">has_https</td><td>Protocol</td><td>Absence of TLS indicates an insecure transport vulnerable to MITM attacks.</td></tr>
+                            <tr><td>10</td><td class="font-monospace text-info">https_in_domain</td><td>Deception</td><td>Placing the token 'https' inside hostname tricks users into trusting fraudulent sites.</td></tr>
+                            <tr><td>11</td><td class="font-monospace text-info">is_shortened</td><td>Obfuscation</td><td>URL shorteners mask destination hostnames and evade initial perimeter filters.</td></tr>
+                            <tr><td>12</td><td class="font-monospace text-info">has_suspicious_keyword</td><td>Behavioral</td><td>Contains credential harvesting tokens (login, signin, verify, account, secure).</td></tr>
+                            <tr><td>13</td><td class="font-monospace text-info">path_depth</td><td>Structure</td><td>Deeper directory hierarchies are common in compromised web hosting scripts.</td></tr>
+                            <tr><td>14</td><td class="font-monospace text-info">prefix_suffix_hyphen</td><td>Host</td><td>Typosquatting technique separating legitimate brand names with hyphens.</td></tr>
+                            <tr><td>15</td><td class="font-monospace text-info">entropy</td><td>Statistical</td><td>Shannon entropy quantifies randomness to identify Domain Generation Algorithms (DGA).</td></tr>
+                            <tr><td>16</td><td class="font-monospace text-info">domain_entropy</td><td>Statistical</td><td>Shannon entropy isolated to the registered hostname.</td></tr>
+                            <tr><td>17</td><td class="font-monospace text-info">tld_risk</td><td>Host</td><td>Registration on notoriously abused free or cheap TLDs (.tk, .xyz, .top, .ml).</td></tr>
+                            <tr><td>18</td><td class="font-monospace text-info">punycode</td><td>IDN Spoofing</td><td>Punycode (<code>xn--</code>) homoglyphs using visually identical Cyrillic characters.</td></tr>
+                            <tr><td>19</td><td class="font-monospace text-info">special_char_ratio</td><td>Syntactic</td><td>Proportion of non-alphanumeric punctuation marks across the URL.</td></tr>
+                            <tr><td>20-24</td><td class="font-monospace text-info">delimiters (?, &, =, /, %)</td><td>Syntactic</td><td>Query parameter counts, path separators, and URL hex encoding obfuscation.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pane 3: Viva Voce Q&A -->
+        <div class="tab-pane fade" id="vivaPane" role="tabpanel">
+            <div class="cyber-card">
+                <h5 class="cyber-card-title mb-3">
+                    <i class="fa-solid fa-user-graduate text-purple"></i> Essential Viva Voce Questions
+                </h5>
+                <div class="accordion accordion-flush" id="vivaAccordion">
+                    <div class="accordion-item bg-transparent border-secondary border-opacity-10">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-transparent text-white small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
+                                Q1: What makes your AI Phishing Detection approach superior to static blacklists?
+                            </button>
+                        </h2>
+                        <div id="q1" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                            <div class="accordion-body text-secondary small">
+                                <strong>Answer:</strong> Static blacklists (like Google Safe Browsing or PhishTank) rely on reactive manual reporting and crawler verification, resulting in a detection lag of 4 to 24 hours. Because the average lifespan of a modern phishing site is under 4 hours (zero-day phishing), blacklists miss up to 60% of active campaigns. Our AI engine evaluates structural, lexical, behavioral, and visual characteristics in real-time (&lt;50ms), detecting brand-new zero-day attacks even if the domain was registered minutes earlier.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item bg-transparent border-secondary border-opacity-10">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-transparent text-white small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
+                                Q2: How does Explainable AI (SHAP) solve the "Black Box" problem in this project?
+                            </button>
+                        </h2>
+                        <div id="q2" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                            <div class="accordion-body text-secondary small">
+                                <strong>Answer:</strong> Traditional machine learning models output a probability score without explanation, making it impossible for security analysts to trust borderline decisions. Using Shapley Additive exPlanations (SHAP) derived from cooperative game theory, our system calculates the exact marginal contribution of each feature to the prediction score. It visually shows *why* a URL was flagged (e.g. "+0.331 due to missing HTTPS, +0.124 due to high-risk .xyz TLD"), providing verifiable evidence for forensic auditing.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item bg-transparent border-secondary border-opacity-10">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-transparent text-white small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
+                                Q3: What is "Quishing" and how does your OpenCV module detect it?
+                            </button>
+                        </h2>
+                        <div id="q3" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                            <div class="accordion-body text-secondary small">
+                                <strong>Answer:</strong> "Quishing" (QR Code Phishing) is an emerging social engineering attack where malicious URLs are encoded inside QR codes printed on physical flyers, parking meters, or embedded in email PDFs to bypass traditional email secure gateways. Our system uses OpenCV's <code>cv2.QRCodeDetector</code> with Otsu thresholding to decode the matrix payload and immediately routes the hidden URL into our multi-tier AI evaluation pipeline.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item bg-transparent border-secondary border-opacity-10">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-transparent text-white small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q4">
+                                Q4: Why did you evaluate 6 different algorithms instead of just one?
+                            </button>
+                        </h2>
+                        <div id="q4" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                            <div class="accordion-body text-secondary small">
+                                <strong>Answer:</strong> Different algorithms possess unique inductive biases: Decision Trees offer interpretable rules, Logistic Regression establishes a linear baseline, Support Vector Machines maximize margins in hyperplanes, Random Forest reduces variance through bagging, XGBoost minimizes residuals through gradient boosting, and Keras ANN learns high-dimensional non-linear interactions. Benchmarking all 6 enables empirical proof of the best architecture for cybersecurity tasks and allows deploying a high-reliability weighted Ensemble.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item bg-transparent border-secondary border-opacity-10">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-transparent text-white small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q5">
+                                Q5: How do you ensure user safety when analyzing potentially dangerous websites?
+                            </button>
+                        </h2>
+                        <div id="q5" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                            <div class="accordion-body text-secondary small">
+                                <strong>Answer:</strong> Suspicious URLs are never opened in the user's browser where client-side exploits, drive-by downloads, or session hijacking could occur. Instead, an isolated backend crawler performs a stream-capped HTTP request (max 1MB, 3-second timeout, no JavaScript execution) inside a sandboxed Python session, inspecting only raw HTML tags and headers.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pane 4: VS Code Execution Guide -->
+        <div class="tab-pane fade" id="vscodePane" role="tabpanel">
+            <div class="cyber-card">
+                <h5 class="cyber-card-title mb-3">
+                    <i class="fa-solid fa-laptop-code text-cyan"></i> Step-by-Step Visual Studio Code Execution Instructions
+                </h5>
+                <ol class="text-secondary small ps-3">
+                    <li class="mb-2">
+                        <strong class="text-white">Open Project in VS Code:</strong><br>
+                        Open Visual Studio Code, click <code>File &gt; Open Folder...</code>, and navigate to:
+                        <code class="text-info">C:\Users\THRINADH\OneDrive\Desktop\AI For Phishing</code>.
+                    </li>
+                    <li class="mb-2">
+                        <strong class="text-white">Select Python Interpreter:</strong><br>
+                        Press <kbd>Ctrl+Shift+P</kbd>, type <code>Python: Select Interpreter</code>, and select Python 3.14 (or your preferred environment).
+                    </li>
+                    <li class="mb-2">
+                        <strong class="text-white">Open Terminal in VS Code:</strong><br>
+                        Press <kbd>Ctrl+`</kbd> (backtick) or select <code>Terminal &gt; New Terminal</code>.
+                    </li>
+                    <li class="mb-2">
+                        <strong class="text-white">Launch Application:</strong><br>
+                        Run either:
+                        <pre class="p-2 rounded font-monospace my-1 text-white" style="background: rgba(0,0,0,0.5);">python app.py</pre>
+                        or double click the provided <code>run_app.bat</code> file.
+                    </li>
+                    <li class="mb-2">
+                        <strong class="text-white">Open Web Browser:</strong><br>
+                        Navigate to: <code class="text-info">http://127.0.0.1:5000</code> to access the live dashboard, scanner, and model comparison suite.
+                    </li>
+                    <li>
+                        <strong class="text-white">Run Automated Unit Tests:</strong><br>
+                        <pre class="p-2 rounded font-monospace my-1 text-white" style="background: rgba(0,0,0,0.5);">python -m unittest discover tests</pre>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

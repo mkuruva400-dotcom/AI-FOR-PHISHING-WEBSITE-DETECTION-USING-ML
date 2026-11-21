@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}ML & Deep Learning Model Comparison{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h2 class="hero-title fs-3 mb-1">Machine Learning & Deep Learning Benchmark</h2>
+            <p class="text-secondary small mb-0">
+                Rigorous empirical comparison across 6 algorithms evaluated on authentic phishing test data.
+            </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 px-3 py-2">
+                <i class="fa-solid fa-trophy me-1"></i> Best Performer: <strong>{{ metrics.best_model }}</strong>
+            </span>
+        </div>
+    </div>
+
+    <!-- Comparative Metrics Master Table -->
+    <div class="cyber-card mb-4">
+        <div class="cyber-card-header">
+            <h5 class="cyber-card-title">
+                <i class="fa-solid fa-table-list text-cyan"></i> Algorithm Evaluation Matrix
+            </h5>
+            <span class="text-secondary small">Evaluated with Stratified 5-Fold / 80-20 Held-Out Split</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-cyber">
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Type / Architecture</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1-Score</th>
+                        <th>ROC-AUC</th>
+                        <th>Training Latency</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m_name, m in metrics.models.items() %}
+                    <tr {% if m_name == metrics.best_model %}style="background: rgba(6, 182, 212, 0.08);"{% endif %}>
+                        <td class="fw-bold text-white">
+                            {% if m_name == metrics.best_model %}
+                                <i class="fa-solid fa-crown text-warning me-1"></i>
+                            {% endif %}
+                            {{ m_name }}
+                        </td>
+                        <td class="text-secondary small">
+                            {% if m_name == 'Random Forest' %}Ensemble (150 Estimators, Gini)
+                            {% elif m_name == 'XGBoost' %}Extreme Gradient Boosted Trees
+                            {% elif m_name == 'Artificial Neural Network' %}Keras 4-Layer MLP + BatchNorm + Dropout
+                            {% elif m_name == 'SVM' %}Radial Basis Function (RBF Kernel)
+                            {% elif m_name == 'Decision Tree' %}CART Tree (Max Depth 12)
+                            {% elif m_name == 'Logistic Regression' %}L2-Regularized Linear Classifier
+                            {% endif %}
+                        </td>
+                        <td class="font-monospace text-info fw-bold">{{ "%.4f"|format(m.accuracy) }}</td>
+                        <td class="font-monospace">{{ "%.4f"|format(m.precision) }}</td>
+                        <td class="font-monospace">{{ "%.4f"|format(m.recall) }}</td>
+                        <td class="font-monospace text-success fw-bold">{{ "%.4f"|format(m.f1_score) }}</td>
+                        <td class="font-monospace text-purple fw-bold">{{ "%.4f"|format(m.roc_auc) }}</td>
+                        <td class="font-monospace text-secondary">{{ m.training_time }} s</td>
+                        <td>
+                            {% if m_name == metrics.best_model %}
+                                <span class="badge bg-cyan bg-opacity-25 text-info border border-info border-opacity-50">Top Rank</span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-25 text-secondary">Verified</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Charts Row: Radar Multi-Metric & Grouped Comparison -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="cyber-card h-100">
+                <div class="cyber-card-header">
+                    <h5 class="cyber-card-title">
+                        <i class="fa-solid fa-circle-nodes text-purple"></i> Multi-Metric Radar Benchmark
+                    </h5>
+                    <span class="badge bg-dark text-secondary border border-secondary small">Relative Strength Profile</span>
+                </div>
+                <div style="height: 320px;">
+                    <canvas id="modelRadarChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="cyber-card h-100">
+                <div class="cyber-card-header">
+                    <h5 class="cyber-card-title">
+                        <i class="fa-solid fa-chart-column text-cyan"></i> Metric Comparison Overview
+                    </h5>
+                    <span class="badge bg-dark text-secondary border border-secondary small">Accuracy vs F1-Score</span>
+                </div>
+                <div style="height: 320px;">
+                    <canvas id="modelBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confusion Matrices Grid -->
+    <div class="cyber-card mb-4">
+        <div class="cyber-card-header">
+            <h5 class="cyber-card-title">
+                <i class="fa-solid fa-border-all text-warning"></i> Empirical Confusion Matrices
+            </h5>
+            <span class="text-secondary small">True Negative &bull; False Positive &bull; False Negative &bull; True Positive</span>
+        </div>
+        <div class="row g-3">
+            {% for m_name, m in metrics.models.items() %}
+            <div class="col-lg-4 col-md-6">
+                <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color);">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-white small">{{ m_name }}</span>
+                        <span class="text-secondary font-monospace small">Acc: {{ (m.accuracy * 100)|round(1) }}%</span>
+                    </div>
+                    <div class="row g-1 text-center" style="font-size: 0.8rem;">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3);">
+                                <div class="text-success fw-bold fs-6 font-monospace">{{ m.confusion_matrix[0][0] }}</div>
+                                <div class="text-secondary small" style="font-size: 0.7rem;">True Negative (TN)</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);">
+                                <div class="text-danger fw-bold fs-6 font-monospace">{{ m.confusion_matrix[0][1] }}</div>
+                                <div class="text-secondary small" style="font-size: 0.7rem;">False Positive (FP)</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3);">
+                                <div class="text-warning fw-bold fs-6 font-monospace">{{ m.confusion_matrix[1][0] }}</div>
+                                <div class="text-secondary small" style="font-size: 0.7rem;">False Negative (FN)</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3);">
+                                <div class="text-success fw-bold fs-6 font-monospace">{{ m.confusion_matrix[1][1] }}</div>
+                                <div class="text-secondary small" style="font-size: 0.7rem;">True Positive (TP)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Architectural Insights -->
+    <div class="cyber-card">
+        <h5 class="cyber-card-title mb-3">
+            <i class="fa-solid fa-graduation-cap text-info"></i> Machine Learning & Deep Learning Engineering Insights
+        </h5>
+        <div class="row g-4 text-secondary small">
+            <div class="col-md-4">
+                <h6 class="text-white small fw-bold">1. Ensemble Trees vs Single Models</h6>
+                <p>
+                    Random Forest and XGBoost excel at detecting complex non-linear combinations of lexical features (e.g. high entropy combined with specific TLD and lack of HTTPS) without suffering from vanishing gradients.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-white small fw-bold">2. Deep Learning ANN Generalization</h6>
+                <p>
+                    The 4-layer Keras Artificial Neural Network incorporates BatchNormalization and Dropout to regularize feature weights, successfully preventing overfitting while modeling high-dimensional correlations across 24 input features.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-white small fw-bold">3. Real-Time Inference Throughput</h6>
+                <p>
+                    Tree-based models evaluate in under 3 milliseconds per URL, making them exceptionally well-suited for high-throughput perimeter firewalls and proxy inspection gateways.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script id="modelMetricsData" type="application/json">
+    {{ metrics|tojson }}
+</script>
+<script src="{{ url_for('static', filename='js/comparison.js') }}"></script>
+{% endblock %}

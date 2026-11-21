@@ -1,0 +1,18 @@
+# AI For Phishing Website Detection - Dependencies
+flask>=3.0.0
+scikit-learn>=1.4.0
+tensorflow>=2.15.0; sys_platform != 'win32' or python_version < '3.14'
+keras>=3.0.0
+xgboost>=2.0.0
+shap>=0.45.0
+opencv-python>=4.9.0
+pillow>=10.0.0
+qrcode>=7.4.2
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+tldextract>=5.1.0
+pandas>=2.1.0
+numpy>=1.26.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+joblib>=1.3.0

@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}Detection History & Incident Telemetry{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h2 class="hero-title fs-3 mb-1">Threat Detection History & Logs</h2>
+            <p class="text-secondary small mb-0">Persistent SQLite audit trail of all historical URL and Quishing security analyses.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ url_for('export_csv') }}" class="btn btn-sm btn-cyber-secondary">
+                <i class="fa-solid fa-file-csv me-1"></i> Export CSV
+            </a>
+            <a href="{{ url_for('export_json') }}" class="btn btn-sm btn-cyber-secondary">
+                <i class="fa-solid fa-file-code me-1"></i> Export JSON
+            </a>
+            <button class="btn btn-sm btn-outline-danger" id="clearHistoryBtn">
+                <i class="fa-solid fa-trash me-1"></i> Clear Log
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="cyber-card mb-4 p-3">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-7">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-secondary">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" class="form-control form-control-cyber" id="historySearch" placeholder="Search by domain, URL keywords, or protocol...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select form-select-cyber" id="verdictFilter">
+                    <option value="ALL" selected>All Verdicts</option>
+                    <option value="PHISHING">Phishing Only (High Risk)</option>
+                    <option value="SUSPICIOUS">Suspicious Only (Medium Risk)</option>
+                    <option value="SAFE">Legitimate Only (Low Risk)</option>
+                </select>
+            </div>
+            <div class="col-md-2 text-md-end">
+                <span class="text-secondary small" id="recordCountDisplay">{{ scans|length }} Records</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="cyber-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-cyber mb-0" id="historyTable">
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">ID</th>
+                        <th>Target Destination</th>
+                        <th>Source</th>
+                        <th>Model</th>
+                        <th>Verdict</th>
+                        <th>Risk Score</th>
+                        <th>Latency</th>
+                        <th>Timestamp (UTC)</th>
+                        <th style="width: 120px;" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    {% for s in scans %}
+                    <tr id="row-{{ s.id }}">
+                        <td class="font-monospace text-secondary">#{{ s.id }}</td>
+                        <td style="max-width: 320px;" class="text-truncate">
+                            <span class="text-white" title="{{ s.target_url }}">{{ s.target_url }}</span>
+                        </td>
+                        <td>
+                            {% if s.source_type == 'QR_CODE' %}
+                                <span class="badge bg-purple bg-opacity-25 text-purple border border-purple border-opacity-25">
+                                    <i class="fa-solid fa-qrcode me-1"></i> QR Code
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-25 text-secondary">
+                                    <i class="fa-solid fa-link me-1"></i> URL
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-secondary small">{{ s.model_name }}</td>
+                        <td>
+                            {% if s.verdict == 'PHISHING' %}
+                                <span class="badge-verdict badge-danger" style="font-size:0.75rem; padding:0.25rem 0.6rem;">Phishing</span>
+                            {% elif s.verdict == 'SUSPICIOUS' %}
+                                <span class="badge-verdict badge-warning" style="font-size:0.75rem; padding:0.25rem 0.6rem;">Suspicious</span>
+                            {% else %}
+                                <span class="badge-verdict badge-safe" style="font-size:0.75rem; padding:0.25rem 0.6rem;">Legitimate</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong class="font-monospace" style="color: {% if s.risk_score >= 70 %}#ef4444{% elif s.risk_score >= 30 %}#f59e0b{% else %}#10b981{% endif %}">
+                                {{ s.risk_score }}/100
+                            </strong>
+                        </td>
+                        <td class="font-monospace text-secondary small">{{ s.response_time_ms }} ms</td>
+                        <td class="text-secondary small font-monospace">{{ s.timestamp }}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-info py-0 px-2 view-details-btn" data-id="{{ s.id }}" title="View Full Vector & SHAP">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger py-0 px-2 delete-record-btn" data-id="{{ s.id }}" title="Delete Record">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="scanDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="background: #111827; border: 1px solid var(--border-color); color: #fff;">
+            <div class="modal-header border-secondary border-opacity-25">
+                <h5 class="modal-title fs-6 fw-bold">
+                    <i class="fa-solid fa-shield-virus text-info me-2"></i> Comprehensive Scan Incident Telemetry
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="text-secondary small fw-bold">TARGET DESTINATION</label>
+                    <div class="p-2 rounded font-monospace small text-break" id="modalUrl" style="background: rgba(0,0,0,0.3);"></div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-md-3 col-6">
+                        <div class="p-2 rounded text-center" style="background: rgba(255,255,255,0.03);">
+                            <div class="text-secondary small">Verdict</div>
+                            <div class="fw-bold" id="modalVerdict">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-2 rounded text-center" style="background: rgba(255,255,255,0.03);">
+                            <div class="text-secondary small">Risk Score</div>
+                            <div class="fw-bold font-monospace" id="modalRiskScore">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-2 rounded text-center" style="background: rgba(255,255,255,0.03);">
+                            <div class="text-secondary small">ML Probability</div>
+                            <div class="fw-bold font-monospace" id="modalProb">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-2 rounded text-center" style="background: rgba(255,255,255,0.03);">
+                            <div class="text-secondary small">Model Engine</div>
+                            <div class="fw-bold" id="modalModel">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-secondary small fw-bold">TRIGGERED THREAT WARNINGS</label>
+                    <div id="modalWarnings" style="max-height: 120px; overflow-y: auto;"></div>
+                </div>
+
+                <div>
+                    <label class="text-secondary small fw-bold">EXTRACTED LEXICAL FEATURE VECTOR</label>
+                    <div class="p-2 rounded font-monospace small" style="background: rgba(0,0,0,0.4); max-height: 150px; overflow-y: auto;" id="modalFeatures"></div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary border-opacity-25">
+                <button type="button" class="btn btn-sm btn-cyber-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('historySearch');
+    const verdictFilter = document.getElementById('verdictFilter');
+    const tableBody = document.getElementById('historyTableBody');
+    const modalElem = document.getElementById('scanDetailsModal');
+    const modal = new bootstrap.Modal(modalElem);
+
+    // Search and Filter Handlers
+    function applyFilters() {
+        const query = searchInput.value.toLowerCase();
+        const verdict = verdictFilter.value;
+        const rows = tableBody.querySelectorAll('tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            const rowVerdict = row.querySelector('.badge-verdict') ? row.querySelector('.badge-verdict').innerText.toUpperCase() : '';
+            const matchesSearch = text.includes(query);
+            const matchesVerdict = (verdict === 'ALL' || rowVerdict.includes(verdict));
+
+            if (matchesSearch && matchesVerdict) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        document.getElementById('recordCountDisplay').innerText = `${visibleCount} Records`;
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    verdictFilter.addEventListener('change', applyFilters);
+
+    // View Details Modal
+    document.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            try {
+                const res = await fetch(`/api/history/${id}`);
+                const data = await res.json();
+                if (!res.ok) {
+                    alert('Error loading record details.');
+                    return;
+                }
+                document.getElementById('modalUrl').innerText = data.target_url;
+                document.getElementById('modalVerdict').innerText = data.verdict;
+                document.getElementById('modalRiskScore').innerText = `${data.risk_score}/100`;
+                document.getElementById('modalProb').innerText = `${(data.ml_probability * 100).toFixed(1)}%`;
+                document.getElementById('modalModel').innerText = data.model_name;
+
+                const wBox = document.getElementById('modalWarnings');
+                wBox.innerHTML = '';
+                if (data.warnings && data.warnings.length) {
+                    data.warnings.forEach(w => {
+                        const div = document.createElement('div');
+                        div.className = 'warning-item small py-1 my-1';
+                        div.innerText = w;
+                        wBox.appendChild(div);
+                    });
+                } else {
+                    wBox.innerHTML = '<span class="text-success small">No adverse threat flags triggered.</span>';
+                }
+
+                document.getElementById('modalFeatures').innerText = JSON.stringify(data.features, null, 2);
+                modal.show();
+            } catch (e) {
+                console.error(e);
+            }
+        });
+    });
+
+    // Delete Record
+    document.querySelectorAll('.delete-record-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            if (!confirm(`Delete scan log record #${id}?`)) return;
+            try {
+                const res = await fetch(`/api/history/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    const row = document.getElementById(`row-${id}`);
+                    if (row) row.remove();
+                    applyFilters();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
+    });
+
+    // Clear All
+    const clearBtn = document.getElementById('clearHistoryBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to permanently clear all scan history logs?')) return;
+            try {
+                const res = await fetch('/api/history/clear', { method: 'POST' });
+                if (res.ok) {
+                    tableBody.innerHTML = '';
+                    document.getElementById('recordCountDisplay').innerText = '0 Records';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

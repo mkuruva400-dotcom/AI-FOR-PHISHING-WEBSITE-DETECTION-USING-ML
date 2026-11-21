@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Interactive Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h2 class="hero-title fs-3 mb-1">Threat Intelligence Analytics Dashboard</h2>
+            <p class="text-secondary small mb-0">Real-time telemetry, model usage patterns, and risk distribution telemetry.</p>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-cyber-secondary" id="refreshDashboardBtn">
+                <i class="fa-solid fa-arrows-rotate me-1"></i> Refresh Live Data
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="row g-3 mb-4">
+        <!-- Total Scans -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="kpi-card">
+                <div class="kpi-icon-box" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
+                    <i class="fa-solid fa-radar"></i>
+                </div>
+                <div>
+                    <div class="kpi-value" id="kpiTotal">{{ analytics.total_scans }}</div>
+                    <div class="kpi-label">Total Scans</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phishing Detected -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="kpi-card" style="border-left: 3px solid #ef4444;">
+                <div class="kpi-icon-box" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">
+                    <i class="fa-solid fa-skull-crossbones"></i>
+                </div>
+                <div>
+                    <div class="kpi-value text-danger" id="kpiPhishing">{{ analytics.phishing_count }}</div>
+                    <div class="kpi-label">Phishing Blocked</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suspicious -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="kpi-card" style="border-left: 3px solid #f59e0b;">
+                <div class="kpi-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <div class="kpi-value text-warning" id="kpiSuspicious">{{ analytics.suspicious_count }}</div>
+                    <div class="kpi-label">Suspicious URLs</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safe Sites -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="kpi-card" style="border-left: 3px solid #10b981;">
+                <div class="kpi-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                    <i class="fa-solid fa-shield-check"></i>
+                </div>
+                <div>
+                    <div class="kpi-value text-success" id="kpiSafe">{{ analytics.safe_count }}</div>
+                    <div class="kpi-label">Safe Verified</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avg Risk Score -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="kpi-card">
+                <div class="kpi-icon-box" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <div>
+                    <div class="kpi-value text-purple" id="kpiAvgScore">{{ analytics.avg_risk_score }}</div>
+                    <div class="kpi-label">Avg Risk Score</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Latency -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="kpi-card">
+                <div class="kpi-icon-box" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <div class="kpi-value" id="kpiLatency">{{ analytics.avg_latency_ms }} ms</div>
+                    <div class="kpi-label">Avg Inference</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1: Verdicts & Risk Histogram -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="cyber-card h-100">
+                <div class="cyber-card-header">
+                    <h5 class="cyber-card-title">
+                        <i class="fa-solid fa-chart-pie text-cyan"></i> Verdict Distribution Breakdown
+                    </h5>
+                    <span class="badge bg-dark text-secondary border border-secondary small">Live Proportions</span>
+                </div>
+                <div style="height: 280px; position: relative;">
+                    <canvas id="verdictChartCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="cyber-card h-100">
+                <div class="cyber-card-header">
+                    <h5 class="cyber-card-title">
+                        <i class="fa-solid fa-chart-simple text-purple"></i> Risk Score Spectrum Histogram
+                    </h5>
+                    <span class="badge bg-dark text-secondary border border-secondary small">Severity Ranges</span>
+                </div>
+                <div style="height: 280px;">
+                    <canvas id="riskDistChartCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2: Timeline & Model Usage -->
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="cyber-card h-100">
+                <div class="cyber-card-header">
+                    <h5 class="cyber-card-title">
+                        <i class="fa-solid fa-chart-line text-info"></i> Detection Timeline Trends
+                    </h5>
+                    <span class="badge bg-dark text-secondary border border-secondary small">Temporal Activity</span>
+                </div>
+                <div style="height: 280px;">
+                    <canvas id="timelineChartCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="cyber-card h-100">
+                <div class="cyber-card-header">
+                    <h5 class="cyber-card-title">
+                        <i class="fa-solid fa-microchip text-primary"></i> Algorithm Utilization Share
+                    </h5>
+                    <span class="badge bg-dark text-secondary border border-secondary small">Engine Breakdown</span>
+                </div>
+                <div style="height: 280px;">
+                    <canvas id="modelUsageChartCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script id="analyticsData" type="application/json">
+    {{ analytics|tojson }}
+</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
